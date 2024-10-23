@@ -10,7 +10,7 @@
 {/snippet}
 
 <div class="prose item-list">
-	<BackArrowTitle title="Data Structures" />
+	<BackArrowTitle href={CONST.ROUTES.HOME()} title="Data Structures" />
 
 	<div class="my-4"></div>
 
@@ -19,6 +19,7 @@
 
 <style lang="postcss">
 	.item-list {
+		min-width: 100%;
 		display: flex;
 		flex-direction: column;
 

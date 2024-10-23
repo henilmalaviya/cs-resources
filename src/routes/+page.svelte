@@ -18,6 +18,7 @@
 	.course-list {
 		display: flex;
 		flex-direction: column;
+		min-width: 100%;
 
 		& a {
 			text-decoration: underline;

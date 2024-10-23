@@ -18,6 +18,7 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"@types/eslint": "^9.6.0",
 		"autoprefixer": "^10.4.20",
+		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
 		"eslint": "^9.7.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -35,6 +36,9 @@
 		"vite": "^5.0.3"
 	},
 	"dependencies": {
-		"phosphor-svelte": "^2.0.1"
+		"canvas": "^2.11.2",
+		"konva": "^9.3.16",
+		"phosphor-svelte": "^2.0.1",
+		"svelte-konva": "^0.3.1"
 	}
 }
