@@ -1,6 +1,18 @@
 <script lang="ts">
-	import '../app.css';
+	import '$lib/styles/global.css';
+
 	let { children } = $props();
 </script>
 
-{@render children()}
+<div class="wrapper">
+	{@render children()}
+</div>
+
+<style lang="postcss">
+	.wrapper {
+		width: 42rem;
+		height: 100%;
+		margin: 0 auto;
+		padding: theme('padding.16') 0;
+	}
+</style>

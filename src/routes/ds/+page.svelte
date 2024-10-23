@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BackArrowTitle from '$lib/components/BackArrowTitle.svelte';
 	import { CONST } from '$lib/const';
 </script>
 
@@ -8,14 +9,16 @@
 	</div>
 {/snippet}
 
-<div class="prose course-list">
-	<h1>Courses</h1>
+<div class="prose item-list">
+	<BackArrowTitle title="Data Structures" />
 
-	{@render LinkItem('Data Structures', CONST.ROUTES.DS()._())}
+	<div class="my-4"></div>
+
+	{@render LinkItem('Stack', CONST.ROUTES.DS().STACK())}
 </div>
 
 <style lang="postcss">
-	.course-list {
+	.item-list {
 		display: flex;
 		flex-direction: column;
 
