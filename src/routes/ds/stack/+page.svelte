@@ -4,15 +4,61 @@
 	import StackPlayground from '$lib/components/playgrounds/Stack.svelte';
 	import StackFunctionCallStackExampleSvg from '$lib/assets/svg/stack-function-call-stack-example.svg';
 	import { CONST } from '$lib/const';
-	import { Warning } from 'phosphor-svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { ArrowClockwise } from 'phosphor-svelte';
+	import { ArrowClockwise, ArrowsOutSimple, ArrowsInSimple } from 'phosphor-svelte';
 	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
+	import { cn } from '$lib/utils/shadcn';
 
 	let stackPlaygroundRef: ReturnType<typeof StackPlayground> | undefined = $state();
+
+	let isPlaygroundFullScreen = $state(false);
+	let scrollPosition = $state(0);
+
+	function togglePlaygroundFullScreen() {
+		if (!isPlaygroundFullScreen) {
+			// entering
+			scrollPosition = window.scrollY;
+		} else {
+			// exiting
+			setTimeout(() => {
+				window.scrollTo(0, scrollPosition);
+			}, 0);
+		}
+
+		isPlaygroundFullScreen = !isPlaygroundFullScreen;
+	}
 </script>
 
-<div class="prose min-w-full">
+{#snippet Playground()}
+	<div class="flex justify-between">
+		<h3 class="m-0">Playground</h3>
+		<div class="flex gap-2">
+			<Button size="sm" onclick={() => stackPlaygroundRef?.reset()} class="gap-2"
+				><ArrowClockwise />Reset</Button
+			>
+			<Button class="lg:hidden text-lg" size="sm" onclick={togglePlaygroundFullScreen}>
+				{#if isPlaygroundFullScreen}
+					<ArrowsInSimple />
+				{:else}
+					<ArrowsOutSimple />
+				{/if}
+			</Button>
+		</div>
+	</div>
+	<hr class="m-0 mb-2" />
+
+	<StackPlayground bind:this={stackPlaygroundRef} />
+{/snippet}
+
+{#if isPlaygroundFullScreen}
+	<div class="fixed inset-0 bg-background z-10 flex justify-center w-full overflow-auto">
+		<div class="py-8 px-4 flex flex-col gap-4 w-full prose">
+			{@render Playground()}
+		</div>
+	</div>
+{/if}
+
+<div class={cn('prose min-w-full', isPlaygroundFullScreen && 'hidden')}>
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Stack" />
 
 	<div class="my-8"></div>
@@ -95,15 +141,7 @@
 	<div class="my-6"></div>
 
 	<div class="px-4 py-4 border-2 border-dashed flex flex-col gap-4">
-		<div class="flex justify-between">
-			<h3 class="m-0">Playground</h3>
-			<Button size="sm" onclick={() => stackPlaygroundRef?.reset()} class="gap-2"
-				><ArrowClockwise />Reset</Button
-			>
-		</div>
-		<hr class="m-0 mb-2" />
-
-		<StackPlayground bind:this={stackPlaygroundRef} />
+		{@render Playground()}
 	</div>
 
 	<h2>Stack Operations</h2>

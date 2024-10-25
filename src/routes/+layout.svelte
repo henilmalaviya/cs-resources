@@ -26,7 +26,7 @@
 		@media (max-width: 768px) {
 			margin: 0;
 			width: 100%;
-			padding: theme('padding.16') theme('padding.4');
+			padding: theme('padding.8') theme('padding.4');
 		}
 	}
 </style>

@@ -11,7 +11,7 @@
 	} from 'phosphor-svelte';
 
 	const MAX = 5;
-	const IN_OUT_ANIMATION_DURATION = 400;
+	const IN_OUT_ANIMATION_DURATION = 300;
 
 	type Props = {};
 
@@ -98,10 +98,10 @@
 		</div>
 		<div class="stack-actions">
 			<Button size="sm" disabled={isFull} onclick={push} class="gap-2"
-				><ArrowBendLeftDown /> Push</Button
+				><ArrowBendLeftDown class="min-w-fit" /> Push</Button
 			>
 			<Button size="sm" disabled={isEmpty} onclick={pop} class="gap-2"
-				><ArrowBendUpLeft />Pop</Button
+				><ArrowBendUpLeft class="min-w-fit" />Pop</Button
 			>
 		</div>
 	</div>
@@ -249,17 +249,18 @@
 		}
 
 		&.empty {
-			background-color: theme('backgroundColor.green.200');
+			background-color: theme('backgroundColor.green.100');
 			border-color: theme('borderColor.green.600');
 
 			&::after {
-				content: 'I am Empty';
+				content: 'Empty';
 				position: absolute;
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
-				font-size: theme('fontSize.xs');
+				font-size: theme('fontSize.sm');
 				font-weight: theme('fontWeight.semibold');
+				color: theme('colors.green.900');
 			}
 		}
 	}
@@ -287,12 +288,12 @@
 		display: flex;
 		flex-direction: column;
 
-		gap: theme('padding.4');
+		gap: theme('gap.1');
 
 		& .core-info {
 			@apply grid-cols-2;
 			display: grid;
-			gap: theme('padding.1') theme('padding.16');
+			gap: theme('gap.1') theme('gap.16');
 		}
 
 		& .operations {
