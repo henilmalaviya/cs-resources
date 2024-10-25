@@ -6,7 +6,7 @@
 	import StackFunctionCallStackExampleDarkSvg from '$lib/assets/svg/stack-function-call-stack-example-dark.svg';
 	import { CONST } from '$lib/const';
 	import { Button } from '$lib/components/ui/button';
-	import { ArrowClockwise, ArrowsOutSimple, ArrowsInSimple, Play } from 'phosphor-svelte';
+	import { ArrowClockwise, ArrowsOutSimple, ArrowsInSimple, RocketLaunch } from 'phosphor-svelte';
 	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 	import { cn } from '$lib/utils/shadcn';
 	import { mode } from 'mode-watcher';
@@ -68,8 +68,8 @@
 {/if}
 
 {#snippet TryInPlayground({ callback }: { callback: () => void })}
-	<Button size="sm" href="#playground" class="gap-2 no-underline" onclick={callback}>
-		<Play size={16} /> Play
+	<Button size="sm" href="#playground" class="gap-1 no-underline" onclick={callback}>
+		<RocketLaunch size={16} /> Launch
 	</Button>
 {/snippet}
 
