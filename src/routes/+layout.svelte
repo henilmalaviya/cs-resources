@@ -13,7 +13,7 @@
 	});
 </script>
 
-<ModeWatcher defaultMode="light" />
+<ModeWatcher defaultMode="system" />
 <div bind:this={wrapperDiv} class="wrapper">
 	{@render children()}
 </div>
