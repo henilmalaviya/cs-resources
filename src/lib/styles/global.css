@@ -33,6 +33,9 @@
 
 		--ring: 240 10% 3.9%;
 
+		--code-background: 220 10% 3.9%;
+		--code-foreground: 0 0% 98%;
+
 		--radius: 0.5rem;
 	}
 
@@ -85,5 +88,16 @@
 
 	body {
 		@apply bg-background text-foreground;
+
+		position: relative;
+	}
+
+	code {
+		&::before {
+			content: '' !important;
+		}
+		&::after {
+			content: '' !important;
+		}
 	}
 }

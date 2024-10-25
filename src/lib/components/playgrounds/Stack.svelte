@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { cn } from '$lib/utils/shadcn';
 	import { Button } from '$lib/components/ui/button';
-	import { fade, slide } from 'svelte/transition';
-	import { onMount } from 'svelte';
+	import { fly, slide } from 'svelte/transition';
 
 	const MAX = 5;
 	const IN_OUT_ANIMATION_DURATION = 400;
+
+	type Props = {};
+
+	const {}: Props = $props();
 
 	let stack = $state<string[]>([]);
 	let TOS: number = $state(-1);
@@ -16,29 +19,47 @@
 
 	const limitedOperations = $derived(operations.slice(-6));
 
-	function push() {
+	export function push(): boolean {
 		if (isFull) {
-			return;
+			return false;
 		}
 		operations.push(`TOS++ (${TOS} ---> ${TOS + 1})`);
 		TOS++;
 		const element = String.fromCharCode(65 + TOS);
 		stack.push(element);
 		operations.push(`Stack[${TOS}] = ${element}`);
+		return true;
 	}
 
-	function pop() {
+	export function pop(): string | null {
 		if (isEmpty) {
-			return;
+			return null;
 		}
-		stack.pop();
+		const element = stack.pop();
 		operations.push(`TOS-- (${TOS} ---> ${TOS - 1})`);
 		TOS--;
+		return element || null;
 	}
 
-	onMount(() => {
-		// push();
-	});
+	export function peek(): string | null {
+		return stack[TOS] || null;
+	}
+
+	export function isStackEmpty(): boolean {
+		return isEmpty;
+	}
+	export function isStackFull(): boolean {
+		return isFull;
+	}
+	export function getTOS(): number {
+		return TOS;
+	}
+	export function getStack() {
+		return stack;
+	}
+	export function getOperations() {
+		return operations;
+	}
 </script>
 
 <div class="playground">
@@ -49,10 +70,10 @@
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
-				in:slide|local={{ duration: IN_OUT_ANIMATION_DURATION }}
-				out:slide|local={{ duration: IN_OUT_ANIMATION_DURATION }}
+				in:fly|local={{ duration: IN_OUT_ANIMATION_DURATION, y: -200 }}
+				out:fly|local={{ duration: IN_OUT_ANIMATION_DURATION, y: -200 }}
 				class={cn('stack-item', isHead && 'head')}
-				onclick={pop}
+				onclick={() => isHead && pop()}
 			>
 				{item}
 				<span class="index">
@@ -69,12 +90,12 @@
 	<div class="stack-info">
 		<div class="core-info">
 			<div class="flex gap-2">
-				<span class="font-semibold">TOS Index:</span>
+				<span class="font-semibold">TOS:</span>
 				<span>{TOS}</span>
 			</div>
 			<div class="flex gap-2">
-				<span class="font-semibold">TOS Element:</span>
-				<span>{stack[TOS] || 'NULL'}</span>
+				<span class="font-semibold">Peek:</span>
+				<span>{peek() || 'NULL'}</span>
 			</div>
 			<div class="flex gap-2">
 				<span class="font-semibold">isFull:</span>
@@ -92,12 +113,14 @@
 			{/if}
 			{#each limitedOperations as operation, i}
 				{@const isLast = i === limitedOperations.length - 1}
-				<div in:slide|local class={cn('operation', isLast && 'font-semibold')}>
-					{operation}
-					{#if isLast}
-						<span class="text-xs italic text-muted-foreground ml-8">(Most Recent)</span>
-					{/if}
-				</div>
+				{#key i}
+					<div in:slide|local class={cn('operation', isLast && 'font-semibold')}>
+						{operation}
+						{#if isLast}
+							<span class="text-xs italic text-muted-foreground ml-8">(Most Recent)</span>
+						{/if}
+					</div>
+				{/key}
 			{/each}
 		</div>
 	</div>
@@ -134,6 +157,8 @@
 
 		transition: all 0.3s linear;
 		position: relative;
+
+		overflow: hidden;
 
 		--stack-item-height: theme('height.12');
 
