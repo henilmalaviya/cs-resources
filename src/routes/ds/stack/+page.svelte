@@ -114,7 +114,7 @@
 				<div class="w-fit mx-auto">
 					<img
 						src={functionCallStackExampleImage}
-						class="mb-0"
+						class="mb-0 dark:brightness-125"
 						alt="Stack: Function Call Stack Example"
 					/>
 					<p class="text-center text-xs">Function Call Stack Example</p>
