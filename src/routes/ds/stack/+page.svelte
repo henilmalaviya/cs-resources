@@ -68,7 +68,16 @@
 {/if}
 
 {#snippet TryInPlayground({ callback }: { callback: () => void })}
-	<Button size="sm" href="#playground" class="gap-1 no-underline" onclick={callback}>
+	<Button
+		size="sm"
+		class="gap-1 no-underline"
+		onclick={async () => {
+			document.querySelector('#playground')?.scrollIntoView({
+				behavior: 'smooth'
+			});
+			await callback();
+		}}
+	>
 		<RocketLaunch size={16} /> Launch
 	</Button>
 {/snippet}
@@ -169,7 +178,7 @@
 				{@render TryInPlayground({
 					callback: async () => {
 						stackPlaygroundRef?.reset();
-						await sleep(500);
+						await sleep(1000);
 						stackPlaygroundRef?.push();
 						await sleep(1000);
 						stackPlaygroundRef?.push();
@@ -217,7 +226,7 @@
 				{@render TryInPlayground({
 					callback: async () => {
 						stackPlaygroundRef?.reset();
-						await sleep(500);
+						await sleep(1000);
 						stackPlaygroundRef?.push();
 						await sleep(1200);
 						stackPlaygroundRef?.pop();
@@ -253,7 +262,7 @@
 				{@render TryInPlayground({
 					callback: async () => {
 						stackPlaygroundRef?.reset();
-						await sleep(800);
+						await sleep(1000);
 						let rem = stackPlaygroundRef?.getRemaining() || 5;
 						for (let i = 0; i < rem; i++) {
 							stackPlaygroundRef?.push();
@@ -291,7 +300,7 @@
 				{@render TryInPlayground({
 					callback: async () => {
 						stackPlaygroundRef?.makeFull();
-						await sleep(800);
+						await sleep(1000);
 						let rem = stackPlaygroundRef?.getTOS() || 5;
 						for (let i = 0; i < rem + 1; i++) {
 							stackPlaygroundRef?.pop();
