@@ -6,7 +6,7 @@
 	import StackFunctionCallStackExampleDarkSvg from '$lib/assets/svg/stack-function-call-stack-example-dark.svg';
 	import { CONST } from '$lib/const';
 	import { Button } from '$lib/components/ui/button';
-	import { ArrowClockwise, ArrowsOutSimple, ArrowsInSimple } from 'phosphor-svelte';
+	import { ArrowClockwise, ArrowsOutSimple, ArrowsInSimple, Play } from 'phosphor-svelte';
 	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 	import { cn } from '$lib/utils/shadcn';
 	import { mode } from 'mode-watcher';
@@ -66,6 +66,12 @@
 		</div>
 	</div>
 {/if}
+
+{#snippet TryInPlayground({ callback }: { callback: () => void })}
+	<Button size="sm" href="#playground" class="gap-2 no-underline" onclick={callback}>
+		<Play size={16} /> Play
+	</Button>
+{/snippet}
 
 <div class={cn('prose min-w-full', isPlaygroundFullScreen && 'hidden')}>
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Stack" />
@@ -158,21 +164,17 @@
 	<h2>Stack Operations</h2>
 	<div class="space-y-10">
 		<div>
-			<div class="flex justify-between">
+			<div class="flex items-center justify-between">
 				<h3 class="m-0">Push</h3>
-				<a
-					href="#playground"
-					class="h-fit"
-					role="button"
-					onclick={async () => {
+				{@render TryInPlayground({
+					callback: async () => {
+						stackPlaygroundRef?.reset();
 						await sleep(500);
 						stackPlaygroundRef?.push();
 						await sleep(1000);
 						stackPlaygroundRef?.push();
-					}}
-				>
-					Try in Playground!
-				</a>
+					}
+				})}
 			</div>
 			<p>Adds an element on top of the stack.</p>
 			<CodeBlock
@@ -212,19 +214,15 @@
 		<div>
 			<div class="flex justify-between">
 				<h3 class="m-0">Pop</h3>
-				<a
-					href="#playground"
-					class="h-fit"
-					role="button"
-					onclick={async () => {
-						await sleep(800);
+				{@render TryInPlayground({
+					callback: async () => {
+						stackPlaygroundRef?.reset();
+						await sleep(500);
 						stackPlaygroundRef?.push();
 						await sleep(1200);
 						stackPlaygroundRef?.pop();
-					}}
-				>
-					Try in Playground!
-				</a>
+					}
+				})}
 			</div>
 			<p>Removes the top element from the stack.</p>
 			<CodeBlock
@@ -252,21 +250,17 @@
 		<div>
 			<div class="flex justify-between">
 				<h3 class="m-0">isFull</h3>
-				<a
-					href="#playground"
-					class="h-fit"
-					role="button"
-					onclick={async () => {
+				{@render TryInPlayground({
+					callback: async () => {
+						stackPlaygroundRef?.reset();
 						await sleep(800);
 						let rem = stackPlaygroundRef?.getRemaining() || 5;
 						for (let i = 0; i < rem; i++) {
 							stackPlaygroundRef?.push();
 							await sleep(700);
 						}
-					}}
-				>
-					Try in Playground!
-				</a>
+					}
+				})}
 			</div>
 			<p>Checks if the stack is full.</p>
 			<CodeBlock
@@ -294,22 +288,17 @@
 		<div>
 			<div class="flex justify-between">
 				<h3 class="m-0">isEmpty</h3>
-				<a
-					href="#playground"
-					class="h-fit"
-					role="button"
-					onclick={async () => {
+				{@render TryInPlayground({
+					callback: async () => {
 						stackPlaygroundRef?.makeFull();
 						await sleep(800);
 						let rem = stackPlaygroundRef?.getTOS() || 5;
 						for (let i = 0; i < rem + 1; i++) {
 							stackPlaygroundRef?.pop();
-							await sleep(700);
+							await sleep(500);
 						}
-					}}
-				>
-					Try in Playground!
-				</a>
+					}
+				})}
 			</div>
 			<p>Checks if the stack is empty.</p>
 			<CodeBlock
