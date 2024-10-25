@@ -39,6 +39,7 @@
 	"dependencies": {
 		"canvas": "^2.11.2",
 		"konva": "^9.3.16",
+		"mode-watcher": "^0.4.1",
 		"phosphor-svelte": "^2.0.1",
 		"svelte-konva": "^0.3.1"
 	}

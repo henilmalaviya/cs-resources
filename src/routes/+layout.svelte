@@ -2,6 +2,7 @@
 	import { wrapperWidth } from '$lib/store/global';
 	import '$lib/styles/global.css';
 	import { onMount } from 'svelte';
+	import { ModeWatcher } from 'mode-watcher';
 
 	let { children } = $props();
 
@@ -12,6 +13,7 @@
 	});
 </script>
 
+<ModeWatcher defaultMode="light" />
 <div bind:this={wrapperDiv} class="wrapper">
 	{@render children()}
 </div>

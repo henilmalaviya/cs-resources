@@ -2,13 +2,7 @@
 	import { cn } from '$lib/utils/shadcn';
 	import { Button } from '$lib/components/ui/button';
 	import { fly, slide } from 'svelte/transition';
-	import {
-		ArrowBendLeftDown,
-		ArrowBendLeftUp,
-		ArrowBendRightUp,
-		ArrowBendUpLeft,
-		ArrowClockwise
-	} from 'phosphor-svelte';
+	import { ArrowBendLeftDown, ArrowBendUpLeft } from 'phosphor-svelte';
 
 	const MAX = 5;
 	const IN_OUT_ANIMATION_DURATION = 300;
@@ -299,8 +293,22 @@
 		& .operations {
 			& .operation {
 				font-size: theme('fontSize.sm');
-				color: theme('colors.black');
+				color: theme('colors.foreground');
 			}
+		}
+	}
+
+	:global(.dark) .stack-box {
+		&.empty {
+			background-color: theme('backgroundColor.green.800');
+
+			&::after {
+				color: theme('colors.green.100');
+			}
+		}
+
+		&.full {
+			background-color: theme('colors.red.900');
 		}
 	}
 </style>

@@ -100,4 +100,8 @@
 			content: '' !important;
 		}
 	}
+
+	.dark .prose {
+		@apply prose-invert;
+	}
 }

@@ -3,16 +3,19 @@
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	import StackPlayground from '$lib/components/playgrounds/Stack.svelte';
 	import StackFunctionCallStackExampleSvg from '$lib/assets/svg/stack-function-call-stack-example.svg';
+	import StackFunctionCallStackExampleDarkSvg from '$lib/assets/svg/stack-function-call-stack-example-dark.svg';
 	import { CONST } from '$lib/const';
 	import { Button } from '$lib/components/ui/button';
 	import { ArrowClockwise, ArrowsOutSimple, ArrowsInSimple } from 'phosphor-svelte';
 	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 	import { cn } from '$lib/utils/shadcn';
+	import { mode } from 'mode-watcher';
 
 	let stackPlaygroundRef: ReturnType<typeof StackPlayground> | undefined = $state();
 
 	let isPlaygroundFullScreen = $state(false);
 	let scrollPosition = $state(0);
+	let functionCallStackExampleImage = $state(StackFunctionCallStackExampleSvg);
 
 	function togglePlaygroundFullScreen() {
 		if (!isPlaygroundFullScreen) {
@@ -27,6 +30,11 @@
 
 		isPlaygroundFullScreen = !isPlaygroundFullScreen;
 	}
+
+	$effect(() => {
+		functionCallStackExampleImage =
+			$mode === 'dark' ? StackFunctionCallStackExampleDarkSvg : StackFunctionCallStackExampleSvg;
+	});
 </script>
 
 {#snippet Playground()}
@@ -104,7 +112,7 @@
 				When the function returns, it is popped off the stack.
 				<div class="w-fit mx-auto">
 					<img
-						src={StackFunctionCallStackExampleSvg}
+						src={functionCallStackExampleImage}
 						class="mb-0"
 						alt="Stack: Function Call Stack Example"
 					/>
