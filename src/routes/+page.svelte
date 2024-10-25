@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
+	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import { CONST } from '$lib/const';
 </script>
 
@@ -10,7 +11,12 @@
 {/snippet}
 
 <div class="prose course-list">
-	<h1>Courses</h1>
+	<div class="w-full flex justify-between">
+		<h1>Courses</h1>
+		<div>
+			<ThemeSwitcher />
+		</div>
+	</div>
 
 	<PageUnderDevelopment />
 
