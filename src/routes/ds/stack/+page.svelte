@@ -213,5 +213,68 @@
 				</ol>
 			</div>
 		</div>
+
+		<div>
+			<h3>isFull</h3>
+			<p>Checks if the stack is full.</p>
+			<CodeBlock
+				code={`
+					int isFull(){
+						if(tos == MAX - 1){
+							return true;
+						}
+						return false;
+					}
+				`}
+			/>
+
+			<p>
+				For limited size stack, if the TOS reaches the maximum index, it means the stack is full.
+			</p>
+
+			<h4>Why <code>MAX - 1</code>?</h4>
+			<p>
+				MAX is the number of elements a stack can hold and here TOS is index which starts with 0, so
+				to account that we need to subtract 1 from MAX.
+			</p>
+		</div>
+
+		<div>
+			<h3>isEmpty</h3>
+			<p>Checks if the stack is empty.</p>
+			<CodeBlock
+				code={`
+					int isEmpty(){
+						if(tos == -1){
+							return true;
+						}
+						return false;
+					}
+				`}
+			/>
+
+			<p>Fundamentally, we know that if TOS is -1, it means the stack is empty.</p>
+		</div>
+
+		<div>
+			<h3>Peek</h3>
+			<p>Returns the top element of the stack.</p>
+			<CodeBlock
+				code={`
+					int peek(){
+						if(isEmpty()){
+							return -1;
+						}
+						return stack[tos];
+					}
+				`}
+			/>
+
+			<p>
+				Condition is that if the stack is empty, TOS will be -1. So if we try to access <code
+					>stack[-1]</code
+				>, we will get error. In order to prevent that we are first checking if the stack is empty.
+			</p>
+		</div>
 	</div>
 </div>
