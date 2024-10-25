@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 	import { CONST } from '$lib/const';
 </script>
 
@@ -11,7 +12,13 @@
 <div class="prose course-list">
 	<h1>Courses</h1>
 
-	{@render LinkItem('Data Structures', CONST.ROUTES.DS()._())}
+	<PageUnderDevelopment />
+
+	<ul>
+		<li>
+			{@render LinkItem('Data Structures', CONST.ROUTES.DS()._())}
+		</li>
+	</ul>
 </div>
 
 <style lang="postcss">

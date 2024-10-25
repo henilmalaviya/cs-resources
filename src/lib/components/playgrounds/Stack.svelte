@@ -2,6 +2,13 @@
 	import { cn } from '$lib/utils/shadcn';
 	import { Button } from '$lib/components/ui/button';
 	import { fly, slide } from 'svelte/transition';
+	import {
+		ArrowBendLeftDown,
+		ArrowBendLeftUp,
+		ArrowBendRightUp,
+		ArrowBendUpLeft,
+		ArrowClockwise
+	} from 'phosphor-svelte';
 
 	const MAX = 5;
 	const IN_OUT_ANIMATION_DURATION = 400;
@@ -15,7 +22,7 @@
 	const isEmpty = $derived(TOS === -1);
 	const isFull = $derived(stack.length >= MAX);
 
-	const operations = $state<string[]>([]);
+	let operations = $state<string[]>([]);
 
 	const limitedOperations = $derived(operations.slice(-6));
 
@@ -60,31 +67,43 @@
 	export function getOperations() {
 		return operations;
 	}
+
+	export function reset() {
+		TOS = -1;
+		stack = [];
+		operations = [];
+	}
 </script>
 
 <div class="playground">
-	<!-- stack -->
-	<div class={cn('stack-box', isFull && 'full', isEmpty && 'empty')}>
-		{#each stack as item, i}
-			{@const isHead = TOS === i}
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div
-				in:fly|local={{ duration: IN_OUT_ANIMATION_DURATION, y: -200 }}
-				out:fly|local={{ duration: IN_OUT_ANIMATION_DURATION, y: -200 }}
-				class={cn('stack-item', isHead && 'head')}
-				onclick={() => isHead && pop()}
+	<div class="playground-container">
+		<!-- stack -->
+		<div class={cn('stack-box', isFull && 'full', isEmpty && 'empty')}>
+			{#each stack as item, i}
+				{@const isHead = TOS === i}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					in:fly|local={{ duration: IN_OUT_ANIMATION_DURATION, y: -200 }}
+					out:fly|local={{ duration: IN_OUT_ANIMATION_DURATION, y: -200 }}
+					class={cn('stack-item', isHead && 'head')}
+					onclick={() => isHead && pop()}
+				>
+					{item}
+					<span class="index">
+						{i}
+					</span>
+				</div>
+			{/each}
+		</div>
+		<div class="stack-actions">
+			<Button size="sm" disabled={isFull} onclick={push} class="gap-2"
+				><ArrowBendLeftDown /> Push</Button
 			>
-				{item}
-				<span class="index">
-					{i}
-				</span>
-			</div>
-		{/each}
-	</div>
-	<div class="stack-actions">
-		<Button disabled={isFull} onclick={push}>Push</Button>
-		<Button disabled={isEmpty} onclick={pop}>Pop</Button>
+			<Button size="sm" disabled={isEmpty} onclick={pop} class="gap-2"
+				><ArrowBendUpLeft />Pop</Button
+			>
+		</div>
 	</div>
 
 	<div class="stack-info">
@@ -135,6 +154,23 @@
 
 		display: flex;
 		gap: theme('gap.8');
+
+		@media only screen and (max-width: 1024px) {
+			flex-direction: column;
+			gap: theme('gap.4');
+		}
+	}
+
+	.playground-container {
+		display: flex;
+		gap: theme('gap.4');
+
+		@media only screen and (max-width: 1024px) {
+			width: min-content;
+			gap: theme('gap.2');
+			flex-direction: column;
+			margin: 0 auto;
+		}
 	}
 
 	.stack-box {
@@ -238,6 +274,13 @@
 		flex-direction: column;
 
 		gap: theme('gap.2');
+
+		@media only screen and (max-width: 1024px) {
+			width: 100%;
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: theme('gap.1');
+		}
 	}
 
 	.stack-info {

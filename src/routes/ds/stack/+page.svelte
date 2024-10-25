@@ -4,6 +4,10 @@
 	import StackPlayground from '$lib/components/playgrounds/Stack.svelte';
 	import StackFunctionCallStackExampleSvg from '$lib/assets/svg/stack-function-call-stack-example.svg';
 	import { CONST } from '$lib/const';
+	import { Warning } from 'phosphor-svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { ArrowClockwise } from 'phosphor-svelte';
+	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 
 	let stackPlaygroundRef: ReturnType<typeof StackPlayground> | undefined = $state();
 </script>
@@ -12,6 +16,8 @@
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Stack" />
 
 	<div class="my-8"></div>
+
+	<PageUnderDevelopment />
 
 	<div class="space-y-6">
 		<p>
@@ -89,7 +95,12 @@
 	<div class="my-6"></div>
 
 	<div class="px-4 py-4 border-2 border-dashed flex flex-col gap-4">
-		<h3 class="m-0">Playground</h3>
+		<div class="flex justify-between">
+			<h3 class="m-0">Playground</h3>
+			<Button size="sm" onclick={() => stackPlaygroundRef?.reset()} class="gap-2"
+				><ArrowClockwise />Reset</Button
+			>
+		</div>
 		<hr class="m-0 mb-2" />
 
 		<StackPlayground bind:this={stackPlaygroundRef} />

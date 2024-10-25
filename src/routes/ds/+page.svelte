@@ -1,5 +1,6 @@
 <script lang="ts">
 	import BackArrowTitle from '$lib/components/BackArrowTitle.svelte';
+	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 	import { CONST } from '$lib/const';
 </script>
 
@@ -13,8 +14,13 @@
 	<BackArrowTitle href={CONST.ROUTES.HOME()} title="Data Structures" />
 
 	<div class="my-4"></div>
+	<PageUnderDevelopment />
 
-	{@render LinkItem('Stack', CONST.ROUTES.DS().STACK())}
+	<ul>
+		<li>
+			{@render LinkItem('Stack', CONST.ROUTES.DS().STACK())}
+		</li>
+	</ul>
 </div>
 
 <style lang="postcss">
