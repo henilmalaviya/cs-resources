@@ -13,7 +13,6 @@
 <div class="prose item-list">
 	<BackArrowTitle href={CONST.ROUTES.HOME()} title="Data Structures" />
 
-	<div class="my-4"></div>
 	<PageUnderDevelopment />
 
 	<ul>

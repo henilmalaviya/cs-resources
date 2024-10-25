@@ -85,8 +85,6 @@
 <div class={cn('prose min-w-full', isPlaygroundFullScreen && 'hidden')}>
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Stack" />
 
-	<div class="my-8"></div>
-
 	<PageUnderDevelopment />
 
 	<div class="space-y-6">
