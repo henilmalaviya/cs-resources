@@ -36,7 +36,7 @@
 
 	$effect(() => {
 		(async () => {
-			html = await codeToHtml(indent(code), { lang, theme: 'ayu-dark' });
+			html = await codeToHtml(indent(code), { lang, theme: 'github-dark' });
 		})();
 	});
 </script>

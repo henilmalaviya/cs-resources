@@ -10,6 +10,7 @@
 	import PageUnderDevelopment from '$lib/components/PageUnderDevelopment.svelte';
 	import { cn } from '$lib/utils/shadcn';
 	import { mode } from 'mode-watcher';
+	import { sleep } from '$lib/utils/sleep';
 
 	let stackPlaygroundRef: ReturnType<typeof StackPlayground> | undefined = $state();
 
@@ -150,14 +151,29 @@
 
 	<div class="my-6"></div>
 
-	<div class="px-4 py-4 border-2 border-dashed flex flex-col gap-4">
+	<div class="px-4 py-4 border-2 border-dashed flex flex-col gap-4" id="playground">
 		{@render Playground()}
 	</div>
 
 	<h2>Stack Operations</h2>
 	<div class="space-y-10">
 		<div>
-			<h3>Push</h3>
+			<div class="flex justify-between">
+				<h3 class="m-0">Push</h3>
+				<a
+					href="#playground"
+					class="h-fit"
+					role="button"
+					onclick={async () => {
+						await sleep(500);
+						stackPlaygroundRef?.push();
+						await sleep(600);
+						stackPlaygroundRef?.push();
+					}}
+				>
+					Try in Playground!
+				</a>
+			</div>
 			<p>Adds an element on top of the stack.</p>
 			<CodeBlock
 				code={`
@@ -173,24 +189,43 @@
 			/>
 
 			<div>
-				<h3>Algorithm:</h3>
+				<h4>Algorithm:</h4>
 				<ol>
 					<li>Check if the stack is full. If it is, we print an error message and return.</li>
 					<li>Increase TOS by 1 and assign the data at "newly increased" TOS index.</li>
 				</ol>
 			</div>
 			<div>
-				<h4>Why <code>stack[++tos] = data</code>?</h4>
-				<p>
-					As we want to add an element, we need to move the TOS forward by 1 index.
-					<br />
-					The operation is equivalent to: <code>stack[tos + 1] = data</code>
-				</p>
+				<h4>Why <code>++tos</code> and not <code>tos++</code>?</h4>
+				<div>
+					If we did <code>tos++</code>, when doing the <code>push</code> operation first time, we
+					will be accidentally doing the following:
+
+					<CodeBlock code="stack[-1] = data;" />
+
+					which is NOT allowed and correct. so, in-order to avoid that, we first increase TOS by 1
+					and then assign the data at "newly increased" TOS index.
+				</div>
 			</div>
 		</div>
 
 		<div>
-			<h3>Pop</h3>
+			<div class="flex justify-between">
+				<h3 class="m-0">Pop</h3>
+				<a
+					href="#playground"
+					class="h-fit"
+					role="button"
+					onclick={async () => {
+						await sleep(800);
+						stackPlaygroundRef?.push();
+						await sleep(800);
+						stackPlaygroundRef?.pop();
+					}}
+				>
+					Try in Playground!
+				</a>
+			</div>
 			<p>Removes the top element from the stack.</p>
 			<CodeBlock
 				code={`
@@ -206,7 +241,7 @@
 			/>
 
 			<div>
-				<h3>Algorithm:</h3>
+				<h4>Algorithm:</h4>
 				<ol>
 					<li>Check if the stack is empty. If it is, we print an error message and return.</li>
 					<li>Decrease the TOS by 1 and return the data from the old TOS index.</li>
