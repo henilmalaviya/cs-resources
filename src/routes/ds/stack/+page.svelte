@@ -132,7 +132,9 @@
 			If the stack has items, TOS will tell you where the top item is. If it's -1, it means the stack
 			is empty.
 
-			<blockquote class="not-italic font-semibold">TOS is sometimes also called head</blockquote>
+			<blockquote class="not-italic font-semibold">
+				TOS is sometimes also referred as "head"
+			</blockquote>
 		</div>
 
 		<div>By using TOS, we can easily implement stack using an Array.</div>
