@@ -250,7 +250,24 @@
 		</div>
 
 		<div>
-			<h3>isFull</h3>
+			<div class="flex justify-between">
+				<h3 class="m-0">isFull</h3>
+				<a
+					href="#playground"
+					class="h-fit"
+					role="button"
+					onclick={async () => {
+						await sleep(800);
+						let rem = stackPlaygroundRef?.getRemaining() || 5;
+						for (let i = 0; i < rem; i++) {
+							stackPlaygroundRef?.push();
+							await sleep(100);
+						}
+					}}
+				>
+					Try in Playground!
+				</a>
+			</div>
 			<p>Checks if the stack is full.</p>
 			<CodeBlock
 				code={`
@@ -275,7 +292,25 @@
 		</div>
 
 		<div>
-			<h3>isEmpty</h3>
+			<div class="flex justify-between">
+				<h3 class="m-0">isEmpty</h3>
+				<a
+					href="#playground"
+					class="h-fit"
+					role="button"
+					onclick={async () => {
+						stackPlaygroundRef?.makeFull();
+						await sleep(800);
+						let rem = stackPlaygroundRef?.getTOS() || 5;
+						for (let i = 0; i < rem + 1; i++) {
+							stackPlaygroundRef?.pop();
+							await sleep(100);
+						}
+					}}
+				>
+					Try in Playground!
+				</a>
+			</div>
 			<p>Checks if the stack is empty.</p>
 			<CodeBlock
 				code={`

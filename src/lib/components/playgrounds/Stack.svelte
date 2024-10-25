@@ -61,7 +61,22 @@
 	export function getOperations() {
 		return operations;
 	}
-
+	export function getMax() {
+		return MAX;
+	}
+	export function makeFull() {
+		for (let i = 0; i < MAX; i++) {
+			push();
+		}
+	}
+	export function makeEmpty() {
+		for (let i = 0; i < MAX; i++) {
+			pop();
+		}
+	}
+	export function getRemaining() {
+		return MAX - stack.length;
+	}
 	export function reset() {
 		TOS = -1;
 		stack = [];
