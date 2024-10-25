@@ -167,7 +167,7 @@
 					onclick={async () => {
 						await sleep(500);
 						stackPlaygroundRef?.push();
-						await sleep(600);
+						await sleep(1000);
 						stackPlaygroundRef?.push();
 					}}
 				>
@@ -219,7 +219,7 @@
 					onclick={async () => {
 						await sleep(800);
 						stackPlaygroundRef?.push();
-						await sleep(800);
+						await sleep(1200);
 						stackPlaygroundRef?.pop();
 					}}
 				>
@@ -261,7 +261,7 @@
 						let rem = stackPlaygroundRef?.getRemaining() || 5;
 						for (let i = 0; i < rem; i++) {
 							stackPlaygroundRef?.push();
-							await sleep(100);
+							await sleep(700);
 						}
 					}}
 				>
@@ -304,7 +304,7 @@
 						let rem = stackPlaygroundRef?.getTOS() || 5;
 						for (let i = 0; i < rem + 1; i++) {
 							stackPlaygroundRef?.pop();
-							await sleep(100);
+							await sleep(700);
 						}
 					}}
 				>
