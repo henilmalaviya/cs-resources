@@ -220,10 +220,12 @@
 			font-size: theme('fontSize.lg');
 			color: theme('textColor.background');
 
-			text-align: center;
-
-			padding: theme('padding.2') 0;
+			padding: theme('padding.2');
 			position: relative;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
 
 			& .index {
 				position: absolute;

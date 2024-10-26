@@ -37,6 +37,10 @@
 		--code-foreground: 0 0% 98%;
 
 		--radius: 0.5rem;
+
+		--sb-track-color: #ffffff;
+		--sb-thumb-color: #000000;
+		--sb-size: 7px;
 	}
 
 	.dark {
@@ -68,6 +72,10 @@
 		--destructive-foreground: 0 0% 98%;
 
 		--ring: 240 4.9% 83.9%;
+
+		--sb-track-color: #000000;
+		--sb-thumb-color: #ffffff;
+		--sb-size: 7px;
 	}
 }
 
@@ -103,5 +111,25 @@
 
 	.dark .prose {
 		@apply prose-invert;
+	}
+}
+
+.fancy-scrollbar::-webkit-scrollbar {
+	width: var(--sb-size);
+}
+
+.fancy-scrollbar::-webkit-scrollbar-track {
+	background: var(--sb-track-color);
+	border-radius: 4px;
+}
+
+.fancy-scrollbar::-webkit-scrollbar-thumb {
+	background: var(--sb-thumb-color);
+	border-radius: 4px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+	.fancy-scrollbar {
+		scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
 	}
 }
