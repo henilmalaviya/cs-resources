@@ -11,61 +11,20 @@
 	import { cn } from '$lib/utils/shadcn';
 	import { mode } from 'mode-watcher';
 	import { sleep } from '$lib/utils/sleep';
+	import PlaygroundContainer from '$lib/components/shared/PlaygroundContainer.svelte';
+	import PlaygroundFullScreenOverlay from '$lib/components/shared/PlaygroundFullScreenOverlay.svelte';
 
 	let stackPlaygroundRef: ReturnType<typeof StackPlayground> | undefined = $state();
 
+	let functionCallStackExampleImage = $state(StackFunctionCallStackExampleSvg);
 	let isPlaygroundFullScreen = $state(false);
 	let scrollPosition = $state(0);
-	let functionCallStackExampleImage = $state(StackFunctionCallStackExampleSvg);
-
-	function togglePlaygroundFullScreen() {
-		if (!isPlaygroundFullScreen) {
-			// entering
-			scrollPosition = window.scrollY;
-		} else {
-			// exiting
-			setTimeout(() => {
-				window.scrollTo(0, scrollPosition);
-			}, 0);
-		}
-
-		isPlaygroundFullScreen = !isPlaygroundFullScreen;
-	}
 
 	$effect(() => {
 		functionCallStackExampleImage =
 			$mode === 'dark' ? StackFunctionCallStackExampleDarkSvg : StackFunctionCallStackExampleSvg;
 	});
 </script>
-
-{#snippet Playground()}
-	<div class="flex justify-between">
-		<h3 class="m-0">Playground</h3>
-		<div class="flex gap-2">
-			<Button size="sm" onclick={() => stackPlaygroundRef?.reset()} class="gap-2"
-				><ArrowClockwise />Reset</Button
-			>
-			<Button class="lg:hidden text-lg" size="sm" onclick={togglePlaygroundFullScreen}>
-				{#if isPlaygroundFullScreen}
-					<ArrowsInSimple />
-				{:else}
-					<ArrowsOutSimple />
-				{/if}
-			</Button>
-		</div>
-	</div>
-	<hr class="m-0 mb-2" />
-
-	<StackPlayground bind:this={stackPlaygroundRef} />
-{/snippet}
-
-{#if isPlaygroundFullScreen}
-	<div class="fixed inset-0 bg-background z-10 flex justify-center w-full overflow-auto">
-		<div class="py-8 px-4 flex flex-col gap-4 w-full prose">
-			{@render Playground()}
-		</div>
-	</div>
-{/if}
 
 {#snippet TryInPlayground({ callback }: { callback: () => void })}
 	<Button
@@ -81,6 +40,30 @@
 		<RocketLaunch size={16} /> Launch
 	</Button>
 {/snippet}
+
+{#snippet Playground()}
+	{#snippet Actions()}
+		<Button size="sm" variant="secondary" class="gap-1" onclick={stackPlaygroundRef?.reset}>
+			<ArrowClockwise size={18} />
+			Reset
+		</Button>
+	{/snippet}
+
+	<PlaygroundContainer
+		actions={Actions}
+		bind:scrollPosition
+		bind:isFullScreen={isPlaygroundFullScreen}
+		id="playground"
+	>
+		<StackPlayground bind:this={stackPlaygroundRef} />
+	</PlaygroundContainer>
+{/snippet}
+
+{#if isPlaygroundFullScreen}
+	<PlaygroundFullScreenOverlay>
+		{@render Playground()}
+	</PlaygroundFullScreenOverlay>
+{/if}
 
 <div class={cn('prose min-w-full', isPlaygroundFullScreen && 'hidden')}>
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Stack" />
@@ -164,9 +147,7 @@
 
 	<div class="my-6"></div>
 
-	<div class="px-4 py-4 border-2 border-dashed flex flex-col gap-4" id="playground">
-		{@render Playground()}
-	</div>
+	{@render Playground()}
 
 	<h2>Stack Operations</h2>
 	<div class="space-y-10">

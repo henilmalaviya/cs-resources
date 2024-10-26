@@ -7,45 +7,34 @@
 	import { cn } from '$lib/utils/shadcn';
 	import InfixToPostfixPlayground from '$lib/components/playgrounds/InfixToPostfix.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import PlaygroundContainer from '$lib/components/shared/PlaygroundContainer.svelte';
+	import PlaygroundFullScreenOverlay from '$lib/components/shared/PlaygroundFullScreenOverlay.svelte';
 
 	let infixToPostfixPlaygroundRef: ReturnType<typeof InfixToPostfixPlayground> | undefined =
 		$state();
 
 	let isPlaygroundFullScreen = $state(false);
 	let scrollPosition = $state(0);
-
-	function togglePlaygroundFullScreen() {
-		if (!isPlaygroundFullScreen) {
-			// entering
-			scrollPosition = window.scrollY;
-		} else {
-			// exiting
-			setTimeout(() => {
-				window.scrollTo(0, scrollPosition);
-			}, 0);
-		}
-
-		isPlaygroundFullScreen = !isPlaygroundFullScreen;
-	}
 </script>
 
 {#snippet Playground()}
-	<div class="flex justify-between">
-		<h3 class="m-0">Playground</h3>
-		<div class="flex gap-2">
-			<Button class="lg:hidden text-lg" size="sm" onclick={togglePlaygroundFullScreen}>
-				{#if isPlaygroundFullScreen}
-					<ArrowsInSimple />
-				{:else}
-					<ArrowsOutSimple />
-				{/if}
-			</Button>
-		</div>
-	</div>
-	<hr class="m-0" />
+	{#snippet Actions()}{/snippet}
 
-	<InfixToPostfixPlayground bind:this={infixToPostfixPlaygroundRef} />
+	<PlaygroundContainer
+		actions={Actions}
+		bind:scrollPosition
+		bind:isFullScreen={isPlaygroundFullScreen}
+		id="playground"
+	>
+		<InfixToPostfixPlayground bind:this={infixToPostfixPlaygroundRef} />
+	</PlaygroundContainer>
 {/snippet}
+
+{#if isPlaygroundFullScreen}
+	<PlaygroundFullScreenOverlay>
+		{@render Playground()}
+	</PlaygroundFullScreenOverlay>
+{/if}
 
 <div class={cn('prose min-w-full')}>
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Infix to Postfix" />
@@ -54,7 +43,5 @@
 
 	<div class="my-8"></div>
 
-	<div class="px-4 py-4 border-2 border-dashed flex flex-col gap-4 min-h-fit">
-		{@render Playground()}
-	</div>
+	{@render Playground()}
 </div>
