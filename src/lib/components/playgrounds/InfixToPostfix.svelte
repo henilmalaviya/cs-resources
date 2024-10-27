@@ -32,6 +32,8 @@
 		to: 'stack' | 'postfix';
 		value: string;
 		highlightIndexes: number[];
+		operatorStack: string[];
+		postfix: string[];
 	};
 
 	let infixInputValue = $state<string>(infix);
@@ -46,6 +48,8 @@
 	let steps = $derived<Step[]>(computeSteps(infix));
 	let isFirstStep = $derived(stepIndex === -1);
 	let isLastStep = $derived(stepIndex === steps.length - 1);
+
+	// $inspect('steps?', steps);
 
 	export function setInfix(infixValue: string) {
 		infix = infixValue;
@@ -80,13 +84,15 @@
 			// Handle opening bracket
 			if (isOpeningBracket(char)) {
 				highlightIndexes.push(i);
+				internalOperatorStack.push({ char, index: i });
 				computedSteps.push({
 					type: 'push',
 					to: 'stack',
 					value: char,
-					highlightIndexes: [...highlightIndexes]
+					highlightIndexes: [...highlightIndexes],
+					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+					postfix: [...internalPostfixStack.map(({ char }) => char)]
 				});
-				internalOperatorStack.push({ char, index: i });
 				highlightIndexes.pop();
 				continue;
 			}
@@ -94,13 +100,15 @@
 			// Handle operands
 			if (isOperand(char)) {
 				highlightIndexes.push(i);
+				internalPostfixStack.push({ char, index: i });
 				computedSteps.push({
 					type: 'push',
 					to: 'postfix',
 					value: char,
-					highlightIndexes: [...highlightIndexes]
+					highlightIndexes: [...highlightIndexes],
+					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+					postfix: [...internalPostfixStack.map(({ char }) => char)]
 				});
-				internalPostfixStack.push({ char, index: i });
 				highlightIndexes.pop();
 				continue;
 			}
@@ -124,27 +132,33 @@
 							type: 'pop',
 							to: 'stack',
 							value: operator.char,
-							highlightIndexes: [...highlightIndexes]
+							highlightIndexes: [...highlightIndexes],
+							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+							postfix: [...internalPostfixStack.map(({ char }) => char)]
 						});
 						internalPostfixStack.push(operator);
 						computedSteps.push({
 							type: 'push',
 							to: 'postfix',
 							value: operator.char,
-							highlightIndexes: [...highlightIndexes]
+							highlightIndexes: [...highlightIndexes],
+							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+							postfix: [...internalPostfixStack.map(({ char }) => char)]
 						});
 						highlightIndexes.pop();
 					}
 				}
+				internalOperatorStack.push({
+					char,
+					index: i
+				});
 				computedSteps.push({
 					type: 'push',
 					to: 'stack',
 					value: char,
-					highlightIndexes: [...highlightIndexes]
-				});
-				internalOperatorStack.push({
-					char,
-					index: i
+					highlightIndexes: [...highlightIndexes],
+					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+					postfix: [...internalPostfixStack.map(({ char }) => char)]
 				});
 				highlightIndexes.pop();
 				continue;
@@ -164,27 +178,33 @@
 							type: 'pop',
 							to: 'stack',
 							value: operator.char,
-							highlightIndexes: [...highlightIndexes]
+							highlightIndexes: [...highlightIndexes],
+							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+							postfix: [...internalPostfixStack.map(({ char }) => char)]
 						});
 						internalPostfixStack.push(operator);
 						computedSteps.push({
 							type: 'push',
 							to: 'postfix',
 							value: operator.char,
-							highlightIndexes: [...highlightIndexes]
+							highlightIndexes: [...highlightIndexes],
+							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+							postfix: [...internalPostfixStack.map(({ char }) => char)]
 						});
 						highlightIndexes.pop();
 					}
 				}
 				// Pop the opening bracket '(' from the stack
+				internalOperatorStack.pop();
 				computedSteps.push({
 					type: 'pop',
 					to: 'stack',
 					value: char,
-					highlightIndexes: [...highlightIndexes]
+					highlightIndexes: [...highlightIndexes],
+					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+					postfix: [...internalPostfixStack.map(({ char }) => char)]
 				});
 				highlightIndexes.pop();
-				internalOperatorStack.pop();
 				continue;
 			}
 		}
@@ -198,14 +218,18 @@
 					type: 'pop',
 					to: 'stack',
 					value: operator.char,
-					highlightIndexes: [...highlightIndexes]
+					highlightIndexes: [...highlightIndexes],
+					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+					postfix: [...internalPostfixStack.map(({ char }) => char)]
 				});
 				internalPostfixStack.push(operator);
 				computedSteps.push({
 					type: 'push',
 					to: 'postfix',
 					value: operator.char,
-					highlightIndexes: [...highlightIndexes]
+					highlightIndexes: [...highlightIndexes],
+					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
+					postfix: [...internalPostfixStack.map(({ char }) => char)]
 				});
 				highlightIndexes.pop();
 			}
@@ -282,25 +306,30 @@
 		// set highlighted indexes coming from step
 		highlightIndexes = step.highlightIndexes;
 
-		// if step is to push to operator stack, we pop it
-		if (step.to === 'stack' && step.type === 'push') {
-			operatorStack.pop();
-			// if step is to pop to operator stack, we push it
-		} else if (step.to === 'stack' && step.type === 'pop') {
-			operatorStack.push(step.value);
-		}
+		operatorStack = step.operatorStack;
+		postfix = step.postfix;
 
-		// if step is to push to postfix, we pop it
-		if (step.to === 'postfix' && step.type === 'push') {
-			postfix.pop();
-			// if step is to pop to postfix, we push it
-		} else if (step.to === 'postfix' && step.type === 'pop') {
-			postfix.push(step.value);
-		}
+		// if step is to push to operator stack, we pop it
+		// if (step.to === 'stack' && step.type === 'push') {
+		// 	operatorStack.pop();
+		// 	// if step is to pop to operator stack, we push it
+		// } else if (step.to === 'stack' && step.type === 'pop') {
+		// 	operatorStack.push(step.value);
+		// }
+
+		// // if step is to push to postfix, we pop it
+		// if (step.to === 'postfix' && step.type === 'push') {
+		// 	postfix.pop();
+		// 	// if step is to pop to postfix, we push it
+		// } else if (step.to === 'postfix' && step.type === 'pop') {
+		// 	postfix.push(step.value);
+		// }
 
 		// if step was first one, reset highlight indexes
 		if (stepIndex === -1) {
 			highlightIndexes = [];
+			operatorStack = [];
+			postfix = [];
 		}
 	}
 
@@ -318,19 +347,22 @@
 		// set highlighted indexes coming from step
 		highlightIndexes = step.highlightIndexes;
 
-		// if step is to push/pop to operator stack
-		if (step.type === 'push' && step.to === 'stack') {
-			operatorStack.push(step.value);
-		} else if (step.type === 'pop' && step.to === 'stack') {
-			operatorStack.pop();
-		}
+		operatorStack = step.operatorStack;
+		postfix = step.postfix;
 
-		// if step is to push/pop to postfix
-		if (step.to === 'postfix' && step.type === 'push') {
-			postfix.push(step.value);
-		} else if (step.to === 'postfix' && step.type === 'pop') {
-			postfix.pop();
-		}
+		// if step is to push/pop to operator stack
+		// if (step.type === 'push' && step.to === 'stack') {
+		// 	operatorStack.push(step.value);
+		// } else if (step.type === 'pop' && step.to === 'stack') {
+		// 	operatorStack.pop();
+		// }
+
+		// // if step is to push/pop to postfix
+		// if (step.to === 'postfix' && step.type === 'push') {
+		// 	postfix.push(step.value);
+		// } else if (step.to === 'postfix' && step.type === 'pop') {
+		// 	postfix.pop();
+		// }
 
 		// if step was last one, reset highlight indexes
 		if (stepIndex === steps.length - 1) {
