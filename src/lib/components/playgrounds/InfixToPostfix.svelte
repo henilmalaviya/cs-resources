@@ -28,12 +28,14 @@
 	let { infix = $bindable('(a + b) * c') }: Props = $props();
 
 	type Step = {
-		type: 'push' | 'pop';
-		to: 'stack' | 'postfix';
+		type: 'push' | 'pop' | 'pop_push';
+		target: 'stack' | 'postfix';
 		value: string;
-		highlightIndexes: number[];
-		operatorStack: string[];
-		postfix: string[];
+		state: {
+			highlightIndexes: number[];
+			operatorStack: string[];
+			postfix: string[];
+		};
 	};
 
 	let infixInputValue = $state<string>(infix);
@@ -49,7 +51,8 @@
 	let isFirstStep = $derived(stepIndex === -1);
 	let isLastStep = $derived(stepIndex === steps.length - 1);
 
-	// $inspect('steps?', steps);
+	$inspect('steps?', steps);
+	$inspect('stepIndex?', stepIndex);
 
 	export function setInfix(infixValue: string) {
 		infix = infixValue;
@@ -75,6 +78,14 @@
 		}[] = [];
 		let highlightIndexes: number[] = [];
 
+		function getState() {
+			return {
+				highlightIndexes: [...highlightIndexes],
+				operatorStack: [...internalOperatorStack.map((char) => char.char)],
+				postfix: [...internalPostfixStack.map((char) => char.char)]
+			};
+		}
+
 		for (let i = 0; i < infixExpression.length; i++) {
 			const char = infixExpression[i];
 
@@ -86,12 +97,10 @@
 				highlightIndexes.push(i);
 				internalOperatorStack.push({ char, index: i });
 				computedSteps.push({
+					target: 'stack',
 					type: 'push',
-					to: 'stack',
 					value: char,
-					highlightIndexes: [...highlightIndexes],
-					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-					postfix: [...internalPostfixStack.map(({ char }) => char)]
+					state: getState()
 				});
 				highlightIndexes.pop();
 				continue;
@@ -102,12 +111,10 @@
 				highlightIndexes.push(i);
 				internalPostfixStack.push({ char, index: i });
 				computedSteps.push({
+					target: 'postfix',
 					type: 'push',
-					to: 'postfix',
 					value: char,
-					highlightIndexes: [...highlightIndexes],
-					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-					postfix: [...internalPostfixStack.map(({ char }) => char)]
+					state: getState()
 				});
 				highlightIndexes.pop();
 				continue;
@@ -130,20 +137,9 @@
 						highlightIndexes.push(operator.index);
 						computedSteps.push({
 							type: 'pop',
-							to: 'stack',
+							target: 'stack',
 							value: operator.char,
-							highlightIndexes: [...highlightIndexes],
-							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-							postfix: [...internalPostfixStack.map(({ char }) => char)]
-						});
-						internalPostfixStack.push(operator);
-						computedSteps.push({
-							type: 'push',
-							to: 'postfix',
-							value: operator.char,
-							highlightIndexes: [...highlightIndexes],
-							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-							postfix: [...internalPostfixStack.map(({ char }) => char)]
+							state: getState()
 						});
 						highlightIndexes.pop();
 					}
@@ -154,11 +150,9 @@
 				});
 				computedSteps.push({
 					type: 'push',
-					to: 'stack',
+					target: 'stack',
 					value: char,
-					highlightIndexes: [...highlightIndexes],
-					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-					postfix: [...internalPostfixStack.map(({ char }) => char)]
+					state: getState()
 				});
 				highlightIndexes.pop();
 				continue;
@@ -174,22 +168,12 @@
 					const operator = internalOperatorStack.pop();
 					if (operator) {
 						highlightIndexes.push(operator.index);
-						computedSteps.push({
-							type: 'pop',
-							to: 'stack',
-							value: operator.char,
-							highlightIndexes: [...highlightIndexes],
-							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-							postfix: [...internalPostfixStack.map(({ char }) => char)]
-						});
 						internalPostfixStack.push(operator);
 						computedSteps.push({
-							type: 'push',
-							to: 'postfix',
+							type: 'pop_push',
+							target: 'postfix',
 							value: operator.char,
-							highlightIndexes: [...highlightIndexes],
-							operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-							postfix: [...internalPostfixStack.map(({ char }) => char)]
+							state: getState()
 						});
 						highlightIndexes.pop();
 					}
@@ -198,11 +182,9 @@
 				internalOperatorStack.pop();
 				computedSteps.push({
 					type: 'pop',
-					to: 'stack',
-					value: char,
-					highlightIndexes: [...highlightIndexes],
-					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-					postfix: [...internalPostfixStack.map(({ char }) => char)]
+					target: 'stack',
+					value: '(',
+					state: getState()
 				});
 				highlightIndexes.pop();
 				continue;
@@ -211,25 +193,16 @@
 
 		// Pop all remaining operators in the stack to postfix
 		while (internalOperatorStack.length > 0) {
-			const operator = internalOperatorStack.pop();
+			const operator = internalOperatorStack[internalOperatorStack.length - 1];
 			if (operator) {
 				highlightIndexes.push(operator.index);
-				computedSteps.push({
-					type: 'pop',
-					to: 'stack',
-					value: operator.char,
-					highlightIndexes: [...highlightIndexes],
-					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-					postfix: [...internalPostfixStack.map(({ char }) => char)]
-				});
+				internalOperatorStack.pop();
 				internalPostfixStack.push(operator);
 				computedSteps.push({
-					type: 'push',
-					to: 'postfix',
+					type: 'pop_push',
+					target: 'postfix',
 					value: operator.char,
-					highlightIndexes: [...highlightIndexes],
-					operatorStack: [...internalOperatorStack.map(({ char }) => char)],
-					postfix: [...internalPostfixStack.map(({ char }) => char)]
+					state: getState()
 				});
 				highlightIndexes.pop();
 			}
@@ -293,79 +266,29 @@
 	}
 
 	export function moveStepBackward() {
-		// if we are already at the start
-		if (isFirstStep) {
-			return;
-		}
-
 		// get step and decrease stepIndex
-		const step = steps[stepIndex--];
-
-		if (!step) return;
+		const step = steps[stepIndex - 1];
+		stepIndex--;
 
 		// set highlighted indexes coming from step
-		highlightIndexes = step.highlightIndexes;
+		highlightIndexes = step?.state.highlightIndexes || [];
 
-		operatorStack = step.operatorStack;
-		postfix = step.postfix;
-
-		// if step is to push to operator stack, we pop it
-		// if (step.to === 'stack' && step.type === 'push') {
-		// 	operatorStack.pop();
-		// 	// if step is to pop to operator stack, we push it
-		// } else if (step.to === 'stack' && step.type === 'pop') {
-		// 	operatorStack.push(step.value);
-		// }
-
-		// // if step is to push to postfix, we pop it
-		// if (step.to === 'postfix' && step.type === 'push') {
-		// 	postfix.pop();
-		// 	// if step is to pop to postfix, we push it
-		// } else if (step.to === 'postfix' && step.type === 'pop') {
-		// 	postfix.push(step.value);
-		// }
-
-		// if step was first one, reset highlight indexes
-		if (stepIndex === -1) {
-			highlightIndexes = [];
-			operatorStack = [];
-			postfix = [];
-		}
+		operatorStack = step?.state.operatorStack || [];
+		postfix = step?.state.postfix || [];
 	}
 
 	export function moveStepForward() {
-		// if we are already at the end
-		if (isLastStep) {
-			return;
-		}
-
 		// increase stepIndex and get step
-		const step = steps[++stepIndex];
-
-		if (!step) return;
+		const step = steps[stepIndex + 1];
+		stepIndex++;
 
 		// set highlighted indexes coming from step
-		highlightIndexes = step.highlightIndexes;
+		highlightIndexes = step?.state.highlightIndexes || [];
 
-		operatorStack = step.operatorStack;
-		postfix = step.postfix;
+		operatorStack = step?.state.operatorStack || [];
+		postfix = step?.state.postfix || [];
 
-		// if step is to push/pop to operator stack
-		// if (step.type === 'push' && step.to === 'stack') {
-		// 	operatorStack.push(step.value);
-		// } else if (step.type === 'pop' && step.to === 'stack') {
-		// 	operatorStack.pop();
-		// }
-
-		// // if step is to push/pop to postfix
-		// if (step.to === 'postfix' && step.type === 'push') {
-		// 	postfix.push(step.value);
-		// } else if (step.to === 'postfix' && step.type === 'pop') {
-		// 	postfix.pop();
-		// }
-
-		// if step was last one, reset highlight indexes
-		if (stepIndex === steps.length - 1) {
+		if (isLastStep) {
 			highlightIndexes = [];
 		}
 	}
@@ -393,8 +316,10 @@
 
 	export function getOperationFromStep(step: Step) {
 		return step.type === 'push'
-			? `Push ${step.value} onto ${step.to}`
-			: `Pop ${step.value} from ${step.to}`;
+			? `Push ${step.value} onto ${step.target}`
+			: step.type === 'pop_push'
+				? `Pop ${step.value} from ${step.target === 'postfix' ? 'stack' : 'postfix'} to ${step.target}`
+				: `Pop ${step.value} from ${step.target}`;
 	}
 
 	export function skipAllSteps() {
