@@ -9,7 +9,8 @@
 		Play,
 		Pause,
 		ArrowClockwise,
-		CaretDoubleRight
+		CaretDoubleRight,
+		CircleNotch
 	} from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
@@ -18,6 +19,7 @@
 
 	type Props = {
 		infix?: string;
+		loading?: boolean;
 	};
 
 	const IN_OUT_ANIMATION_DURATION = 300;
@@ -25,7 +27,7 @@
 	const RIGHT_ASSOCIATIVE_OPERATORS = ['^'];
 	const SEPARATORS = [' '];
 
-	let { infix = $bindable('(a + b) * c') }: Props = $props();
+	let { infix = $bindable('(a + b) * c'), loading = $bindable(false) }: Props = $props();
 
 	type Step = {
 		type: 'push' | 'pop' | 'pop_push';
@@ -330,6 +332,10 @@
 		}
 	}
 
+	export function setLoading(value: boolean) {
+		loading = value;
+	}
+
 	function handleInfixInput() {
 		if (infixInputValue.trim() === '') {
 			return;
@@ -510,7 +516,17 @@
 	</div>
 {/snippet}
 
+{#snippet LoadingOverlay()}
+	<div class="absolute z-20 inset-0 flex justify-center items-center bg-background bg-opacity-90">
+		<CircleNotch class="animate-spin" size={24} />
+	</div>
+{/snippet}
+
 <div class="playground">
+	{#if loading}
+		{@render LoadingOverlay()}
+	{/if}
+
 	{@render InfixExpressionSection()}
 
 	<div class="flex gap-4 flex-col lg:flex-row">
@@ -541,6 +557,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: theme('gap.4');
+
+		position: relative;
 	}
 
 	.playground .infix-input-container {
