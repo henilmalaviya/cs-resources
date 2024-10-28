@@ -11,6 +11,7 @@
 	import PlaygroundFullScreenOverlay from '$lib/components/shared/PlaygroundFullScreenOverlay.svelte';
 	import { page } from '$app/stores';
 	import { copyTextToClipboard } from '$lib/utils/copy.browser';
+	import { onMount } from 'svelte';
 
 	let infixToPostfixPlaygroundRef: ReturnType<typeof InfixToPostfixPlayground> | undefined =
 		$state();
@@ -18,7 +19,7 @@
 	let infixExpression = $state('(a + b) * c');
 	let infixPlaygroundLoading = $state(true);
 
-	$effect(() => {
+	onMount(() => {
 		infixPlaygroundLoading = true;
 		const playgroundInfixQuery = $page.url.searchParams.get('infix');
 
