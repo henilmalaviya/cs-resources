@@ -135,9 +135,10 @@
 					const operator = internalOperatorStack.pop();
 					if (operator) {
 						highlightIndexes.push(operator.index);
+						internalPostfixStack.push(operator);
 						computedSteps.push({
-							type: 'pop',
-							target: 'stack',
+							type: 'pop_push',
+							target: 'postfix',
 							value: operator.char,
 							state: getState()
 						});
