@@ -298,6 +298,7 @@
 
 	export function play() {
 		playInterval = setInterval(() => {
+			if (stepIndex === steps.length - 1) return;
 			moveStepForward();
 		}, 1000);
 		isPlaying = true;

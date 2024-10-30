@@ -41,7 +41,7 @@
 	{#snippet Actions()}
 		<Button
 			size="sm"
-			class="text-lg"
+			class="text-lg gap-1"
 			onclick={async () => {
 				await copyTextToClipboard(`${$page.url.href}?infix=${encodeURIComponent(infixExpression)}`);
 				playgroundActionCopied = true;
@@ -53,6 +53,7 @@
 		>
 			{#if playgroundActionCopied}
 				<Check />
+				<span class="text-xs">Copied</span>
 			{:else}
 				<LinkSimple />
 			{/if}
