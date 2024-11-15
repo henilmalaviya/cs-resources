@@ -68,8 +68,6 @@
 <div class={cn('prose min-w-full', isPlaygroundFullScreen && 'hidden')}>
 	<BackArrowTitle href={CONST.ROUTES.DS()._()} title="Stack" />
 
-	<PageUnderDevelopment />
-
 	<div class="space-y-6">
 		<p>
 			A stack is a linear data structure that follows the <b>Last In, First Out (LIFO)</b> principle.
