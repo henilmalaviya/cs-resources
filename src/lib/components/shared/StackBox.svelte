@@ -26,7 +26,7 @@
 		<div
 			in:fly|local={{ duration: animationDuration, y: -200 }}
 			out:fly|local={{ duration: animationDuration, y: -200 }}
-			class={cn('stack-item', isHead && 'head')}
+			class={cn('stack-item', isHead && '')}
 		>
 			{item}
 			<span class="index">
