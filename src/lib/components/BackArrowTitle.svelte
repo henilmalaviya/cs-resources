@@ -11,6 +11,6 @@
 <div class="prose flex justify-between min-w-full">
 	<h1 class="flex gap-4"><span><BackArrow {href} /></span>{title}</h1>
 	<div>
-		<ThemeSwitcher />
+		<!-- <ThemeSwitcher /> -->
 	</div>
 </div>
